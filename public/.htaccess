@@ -1,1 +1,15 @@
+# Empêche l'affichage du contenu des dossiers
+Options -Indexes -MultiViews
 
+# Point d'entrée de l'application
+DirectoryIndex index.php
+
+# Active la réécriture d'URL
+RewriteEngine On
+
+# Si le fichier ou le dossier existe, Apache le sert directement
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Sinon, toutes les requêtes passent par index.php
+RewriteRule ^ index.php [QSA,L]
