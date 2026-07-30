@@ -36,28 +36,6 @@ $router = new Router();
 
 require $rootPath . '/routes/web.php';
 
-// Routes temporaires de test
-
-$router->get('/test-form', static function (): void {
-    require dirname(__DIR__) . '/app/Views/test-form.php';
-});
-
-$router->post('/test-form', static function (): void {
-    $submittedToken = $_POST['_token'] ?? null;
-
-    if (!is_string($submittedToken) || !Csrf::validate($submittedToken)) {
-        http_response_code(403);
-
-        require dirname(__DIR__) . '/app/Views/errors/403.php';
-
-        return;
-    }
-
-    Flash::add('success', 'Le formulaire a été envoyé avec succès.');
-
-    header('Location: /test-form', true, 303);
-});
-
 $router->dispatch(
     $_SERVER['REQUEST_METHOD'],
     $_SERVER['REQUEST_URI']
