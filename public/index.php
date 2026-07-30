@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Core\Csrf;
 use App\Core\Flash;
 use App\Core\Router;
 use App\Core\Session;
