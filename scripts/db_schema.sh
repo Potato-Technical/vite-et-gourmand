@@ -1,13 +1,47 @@
 #!/usr/bin/env bash
+
+# Arrête le script dès qu'une commande échoue, qu'une variable manque
+# ou qu'une commande d'un pipeline retourne une erreur.
 set -euo pipefail
-if [ -f .env ]; then
-  set -a; source .env; set +a
-else
-  echo ".env manquant"; exit 1
+
+# Détermine automatiquement les chemins du projet.
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+ENV_FILE="${PROJECT_ROOT}/.env"
+SCHEMA_FILE="${PROJECT_ROOT}/database/sql/01_schema.sql"
+
+# Vérifie la présence du fichier .env.
+if [[ ! -f "${ENV_FILE}" ]]; then
+    echo "[ERREUR] Fichier .env introuvable : ${ENV_FILE}" >&2
+    exit 1
 fi
 
-echo "[DB] Load schema (inside db container)"
+# Charge les variables du projet.
+set -a
+# shellcheck disable=SC1090
+source "${ENV_FILE}"
+set +a
 
-docker compose exec -T db mysql -u"${DB_USER}" -p"${DB_PASS}" "${DB_NAME}" < database/sql/01_schema.sql
+# Vérifie les variables nécessaires à la connexion MySQL.
+: "${DB_NAME:?Variable DB_NAME manquante dans .env}"
+: "${DB_USER:?Variable DB_USER manquante dans .env}"
+: "${DB_PASS:?Variable DB_PASS manquante dans .env}"
 
-echo "[OK] Schema loaded"
+# Vérifie la présence du fichier SQL.
+if [[ ! -f "${SCHEMA_FILE}" ]]; then
+    echo "[ERREUR] Fichier de schéma introuvable : ${SCHEMA_FILE}" >&2
+    exit 1
+fi
+
+echo "[DB] Import du schéma : database/sql/01_schema.sql"
+
+docker compose \
+    --project-directory "${PROJECT_ROOT}" \
+    exec -T db \
+    mysql \
+    -u"${DB_USER}" \
+    -p"${DB_PASS}" \
+    "${DB_NAME}" \
+    < "${SCHEMA_FILE}"
+
+echo "[OK] Schéma importé"
