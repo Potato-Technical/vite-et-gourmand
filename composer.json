@@ -1,4 +1,7 @@
 {
+    "name": "potato-technical/vite-et-gourmand",
+    "description": "Application web de restauration Vite & Gourmand",
+    "license": "proprietary",
     "require": {
         "php": "^8.3",
         "vlucas/phpdotenv": "^5.6"
