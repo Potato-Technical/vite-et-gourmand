@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Core\Flash;
 use App\Core\Router;
 use App\Core\Session;
 use Dotenv\Dotenv;
@@ -28,6 +29,7 @@ $dotenv->required([
 $appConfig = require $rootPath . '/config/app.php';
 
 Session::start($appConfig['session']);
+Flash::startRequest();
 
 $router = new Router();
 
