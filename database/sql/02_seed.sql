@@ -116,56 +116,56 @@ INSERT INTO `utilisateur` (
         1, 'Admin', 'Vite et Gourmand', '0500000001',
         'admin@vite-gourmand.test',
         '1 rue Exemple', NULL, '33000', 'Bordeaux',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         1, '2026-04-01 09:00:00', '2026-04-01 09:00:00', 3
     ),
     (
         2, 'Martin', 'Élodie', '0600000002',
         'employe@vite-gourmand.test',
         '2 rue Exemple', NULL, '33000', 'Bordeaux',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         1, '2026-04-02 09:00:00', '2026-04-02 09:00:00', 2
     ),
     (
         3, 'Bernard', 'Lucas', '0600000003',
         'employe.inactif@vite-gourmand.test',
         '3 rue Exemple', NULL, '33000', 'Bordeaux',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         0, '2026-04-03 09:00:00', '2026-07-01 10:00:00', 2
     ),
     (
         10, 'Durand', 'Alice', '0600000010',
         'alice@vite-gourmand.test',
         '10 rue Exemple', NULL, '33000', 'Bordeaux',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         1, '2026-05-01 09:00:00', '2026-05-01 09:00:00', 1
     ),
     (
         11, 'Benali', 'Karim', '0600000011',
         'karim@vite-gourmand.test',
         '11 rue Exemple', NULL, '33600', 'Pessac',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         1, '2026-05-02 09:00:00', '2026-05-02 09:00:00', 1
     ),
     (
         12, 'Petit', 'Laura', '0600000012',
         'laura@vite-gourmand.test',
         '12 rue Exemple', 'Appartement 2', '33000', 'Bordeaux',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         1, '2026-05-03 09:00:00', '2026-05-03 09:00:00', 1
     ),
     (
         13, 'Moreau', 'Hugo', '0600000013',
         'hugo@vite-gourmand.test',
         '13 rue Exemple', NULL, '33700', 'Mérignac',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         1, '2026-05-04 09:00:00', '2026-05-04 09:00:00', 1
     ),
     (
         14, 'Robert', 'Inès', '0600000014',
         'ines@vite-gourmand.test',
         '14 rue Exemple', NULL, '33000', 'Bordeaux',
-        '$2b$12$ris9x8nO1DcO9qN7ClepDO9ReDF3dKF6hXKveHn6qc.CQT0Jstc.C',
+        '$2y$10$jkmSls.YWUD/Jg2EUcPABuECu6Z6ZAxnkFain7STeFsmLYcl3yOyK',
         1, '2026-05-05 09:00:00', '2026-05-05 09:00:00', 1
     );
 

@@ -100,6 +100,36 @@ final class Session
         session_destroy();
     }
 
+    public static function set(string $key, mixed $value): void
+    {
+        self::ensureStarted();
+
+        $_SESSION[$key] = $value;
+    }
+
+    public static function get(
+        string $key,
+        mixed $default = null
+    ): mixed {
+        self::ensureStarted();
+
+        return $_SESSION[$key] ?? $default;
+    }
+
+    public static function has(string $key): bool
+    {
+        self::ensureStarted();
+
+        return array_key_exists($key, $_SESSION);
+    }
+
+    public static function remove(string $key): void
+    {
+        self::ensureStarted();
+
+        unset($_SESSION[$key]);
+    }
+
     private static function ensureStarted(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

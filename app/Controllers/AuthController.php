@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Csrf;
 use App\Core\Database;
 use App\Core\Flash;
 use App\Models\User;
-use PDO;
 use PDOException;
 use RuntimeException;
 
@@ -37,15 +37,8 @@ final class AuthController extends Controller
 
     public function register(): void
     {
-        $submittedToken = $_POST['_token'] ?? null;
-
-        if (
-            !is_string($submittedToken)
-            || !Csrf::validate($submittedToken)
-        ) {
-            http_response_code(403);
-
-            $this->render('errors/403');
+        if (!$this->hasValidCsrfToken()) {
+            $this->forbidden();
 
             return;
         }
@@ -54,10 +47,16 @@ final class AuthController extends Controller
             'nom' => $this->postString('nom'),
             'prenom' => $this->postString('prenom'),
             'telephone' => $this->postString('telephone'),
-            'email' => strtolower($this->postString('email')),
+            'email' => strtolower(
+                $this->postString('email')
+            ),
         ];
 
-        $password = $this->postString('password', false);
+        $password = $this->postString(
+            'password',
+            false
+        );
+
         $passwordConfirmation = $this->postString(
             'password_confirmation',
             false
@@ -137,6 +136,110 @@ final class AuthController extends Controller
         header('Location: /inscription', true, 303);
     }
 
+    public function showLogin(): void
+    {
+        if (Auth::check()) {
+            header('Location: /', true, 303);
+
+            return;
+        }
+
+        $this->render('auth/login', [
+            'errors' => [],
+            'old' => [],
+        ]);
+    }
+
+    public function login(): void
+    {
+        if (!$this->hasValidCsrfToken()) {
+            $this->forbidden();
+
+            return;
+        }
+
+        $old = [
+            'email' => strtolower(
+                $this->postString('email')
+            ),
+        ];
+
+        $password = $this->postString(
+            'password',
+            false
+        );
+
+        $errors = $this->validateLogin(
+            $old['email'],
+            $password
+        );
+
+        if ($errors !== []) {
+            http_response_code(422);
+
+            $this->render('auth/login', [
+                'errors' => $errors,
+                'old' => $old,
+            ]);
+
+            return;
+        }
+
+        $user = $this->users->findByEmail(
+            $old['email']
+        );
+
+        $authenticationFailed = $user === null
+            || (int) ($user['actif'] ?? 0) !== 1
+            || !password_verify(
+                $password,
+                (string) ($user['mot_de_passe_hash'] ?? '')
+            );
+
+        if ($authenticationFailed) {
+            http_response_code(422);
+
+            $this->render('auth/login', [
+                'errors' => [
+                    'credentials' =>
+                        'Adresse e-mail ou mot de passe incorrect.',
+                ],
+                'old' => $old,
+            ]);
+
+            return;
+        }
+
+        Auth::login($user);
+        Csrf::regenerate();
+
+        Flash::add(
+            'success',
+            'Vous êtes maintenant connecté.'
+        );
+
+        header('Location: /', true, 303);
+    }
+
+    public function logout(): void
+    {
+        if (!$this->hasValidCsrfToken()) {
+            $this->forbidden();
+
+            return;
+        }
+
+        Auth::logout();
+        Csrf::regenerate();
+
+        Flash::add(
+            'success',
+            'Vous êtes maintenant déconnecté.'
+        );
+
+        header('Location: /connexion', true, 303);
+    }
+
     /**
      * @param array{
      *     nom: string,
@@ -155,14 +258,16 @@ final class AuthController extends Controller
         $errors = [];
 
         if ($data['nom'] === '') {
-            $errors['nom'] = 'Le nom est obligatoire.';
+            $errors['nom'] =
+                'Le nom est obligatoire.';
         } elseif ($this->length($data['nom']) > 100) {
             $errors['nom'] =
                 'Le nom ne doit pas dépasser 100 caractères.';
         }
 
         if ($data['prenom'] === '') {
-            $errors['prenom'] = 'Le prénom est obligatoire.';
+            $errors['prenom'] =
+                'Le prénom est obligatoire.';
         } elseif ($this->length($data['prenom']) > 100) {
             $errors['prenom'] =
                 'Le prénom ne doit pas dépasser 100 caractères.';
@@ -183,7 +288,10 @@ final class AuthController extends Controller
             $errors['email'] =
                 'L’adresse e-mail ne doit pas dépasser 254 caractères.';
         } elseif (
-            filter_var($data['email'], FILTER_VALIDATE_EMAIL) === false
+            filter_var(
+                $data['email'],
+                FILTER_VALIDATE_EMAIL
+            ) === false
         ) {
             $errors['email'] =
                 'L’adresse e-mail n’est pas valide.';
@@ -205,13 +313,67 @@ final class AuthController extends Controller
                 'La confirmation du mot de passe est obligatoire.';
         } elseif (
             $password !== ''
-            && !hash_equals($password, $passwordConfirmation)
+            && !hash_equals(
+                $password,
+                $passwordConfirmation
+            )
         ) {
             $errors['password_confirmation'] =
                 'Les mots de passe ne correspondent pas.';
         }
 
         return $errors;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function validateLogin(
+        string $email,
+        string $password
+    ): array {
+        $errors = [];
+
+        if ($email === '') {
+            $errors['email'] =
+                'L’adresse e-mail est obligatoire.';
+        } elseif ($this->length($email) > 254) {
+            $errors['email'] =
+                'L’adresse e-mail ne doit pas dépasser 254 caractères.';
+        } elseif (
+            filter_var(
+                $email,
+                FILTER_VALIDATE_EMAIL
+            ) === false
+        ) {
+            $errors['email'] =
+                'L’adresse e-mail n’est pas valide.';
+        }
+
+        if ($password === '') {
+            $errors['password'] =
+                'Le mot de passe est obligatoire.';
+        } elseif ($this->length($password) > 4096) {
+            $errors['password'] =
+                'Le mot de passe est trop long.';
+        }
+
+        return $errors;
+    }
+
+    private function hasValidCsrfToken(): bool
+    {
+        $submittedToken = $_POST['_token'] ?? null;
+
+        return is_string($submittedToken)
+            && Csrf::validate($submittedToken);
+    }
+
+    private function forbidden(): void
+    {
+        http_response_code(403);
+
+        $this->render('errors/403');
     }
 
     private function postString(
@@ -230,7 +392,10 @@ final class AuthController extends Controller
     private function length(string $value): int
     {
         if (function_exists('mb_strlen')) {
-            return mb_strlen($value, 'UTF-8');
+            return mb_strlen(
+                $value,
+                'UTF-8'
+            );
         }
 
         return strlen($value);
