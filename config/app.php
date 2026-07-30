@@ -14,4 +14,9 @@ return [
         $_ENV['APP_DEBUG'] ?? false,
         FILTER_VALIDATE_BOOL
     ),
+
+    'session' => [
+        'name' => $_ENV['SESSION_NAME'] ?? 'vite_gourmand_session',
+        'lifetime' => (int) ($_ENV['SESSION_LIFETIME'] ?? 7200),
+    ],
 ];

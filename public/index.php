@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Core\Router;
+use App\Core\Session;
 use Dotenv\Dotenv;
 
 $rootPath = dirname(__DIR__);
@@ -20,7 +21,13 @@ $dotenv->required([
     'DB_NAME',
     'DB_USER',
     'DB_PASS',
+    'SESSION_NAME',
+    'SESSION_LIFETIME',
 ])->notEmpty();
+
+$appConfig = require $rootPath . '/config/app.php';
+
+Session::start($appConfig['session']);
 
 $router = new Router();
 
