@@ -163,4 +163,31 @@ final class User
 
         return $value === '' ? null : $value;
     }
+
+    public function findById(int $id): ?array
+    {
+        $statement = $this->pdo->prepare(
+            <<<'SQL'
+                SELECT
+                    id_utilisateur,
+                    nom,
+                    prenom,
+                    telephone,
+                    email,
+                    actif,
+                    id_role
+                FROM utilisateur
+                WHERE id_utilisateur = :id
+                LIMIT 1
+            SQL
+        );
+
+        $statement->execute([
+            'id' => $id,
+        ]);
+
+        $user = $statement->fetch();
+
+        return is_array($user) ? $user : null;
+    }
 }
