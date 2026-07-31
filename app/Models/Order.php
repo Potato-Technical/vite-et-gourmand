@@ -20,7 +20,6 @@ final class Order
 
     /**
      * @param array{
-     *     id_utilisateur: int,
      *     id_menu: int,
      *     telephone: string,
      *     adresse_ligne_1: string,
@@ -30,7 +29,7 @@ final class Order
      *     date_prestation: string,
      *     heure_livraison_souhaitee: string,
      *     nombre_personnes: int
-     * } $data
+     * } $input
      *
      * @return array{
      *     id_commande: int,
@@ -42,19 +41,17 @@ final class Order
      *     total_cents: int
      * }
      */
-    public function place(array $data): array
+    public function place(int $userId, array $input): array
     {
-        $this->validateInput($data);
+        $this->validateInput($userId, $input);
 
         try {
             $this->pdo->beginTransaction();
 
-            $user = $this->findActiveUserForOrder(
-                $data['id_utilisateur']
-            );
+            $user = $this->findActiveUserForOrder($userId);
 
             $menu = $this->findMenuForUpdate(
-                $data['id_menu']
+                $input['id_menu']
             );
 
             $minimumPriceCents = self::decimalToCents(
@@ -64,22 +61,21 @@ final class Order
             $pricing = $this->pricingService->calculate(
                 $minimumPriceCents,
                 (int) $menu['nombre_personnes_minimum'],
-                $data['nombre_personnes'],
-                $data['ville']
+                $input['nombre_personnes'],
+                $input['ville']
             );
 
-            $statusId = $this->findStatusId(
-                'en_attente'
-            );
+            $statusId = $this->findStatusId('en_attente');
 
             $orderNumber = self::generateOrderNumber();
 
             $this->decrementMenuStock(
-                $data['id_menu']
+                $input['id_menu']
             );
 
             $orderId = $this->insertOrder(
-                $data,
+                $userId,
+                $input,
                 $user,
                 $menu,
                 $pricing,
@@ -90,7 +86,7 @@ final class Order
             $this->insertInitialStatusHistory(
                 $orderId,
                 $statusId,
-                $data['id_utilisateur']
+                $userId
             );
 
             $this->pdo->commit();
@@ -257,7 +253,6 @@ final class Order
 
     /**
      * @param array{
-     *     id_utilisateur: int,
      *     id_menu: int,
      *     telephone: string,
      *     adresse_ligne_1: string,
@@ -279,6 +274,7 @@ final class Order
      * } $pricing
      */
     private function insertOrder(
+        int $userId,
         array $data,
         array $user,
         array $menu,
@@ -378,7 +374,7 @@ final class Order
             'prix_total' => self::centsToDecimal(
                 $pricing['total_cents']
             ),
-            'id_utilisateur' => $data['id_utilisateur'],
+            'id_utilisateur' => $userId,
             'id_menu' => $data['id_menu'],
             'id_statut_courant' => $statusId,
         ]);
@@ -417,7 +413,6 @@ final class Order
 
     /**
      * @param array{
-     *     id_utilisateur: int,
      *     id_menu: int,
      *     telephone: string,
      *     adresse_ligne_1: string,
@@ -429,9 +424,9 @@ final class Order
      *     nombre_personnes: int
      * } $data
      */
-    private function validateInput(array $data): void
+    private function validateInput(int $userId, array $data): void
     {
-        if ($data['id_utilisateur'] <= 0) {
+        if ($userId <= 0) {
             throw new InvalidArgumentException(
                 'L’identifiant utilisateur est invalide.'
             );
@@ -522,5 +517,57 @@ final class Order
         $value = trim($value);
 
         return $value === '' ? null : $value;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    public function findOwnedByNumber(
+        string $number,
+        int $userId
+    ): ?array {
+        $statement = $this->pdo->prepare(
+            <<<'SQL'
+                SELECT
+                    id_commande,
+                    numero_commande,
+                    date_commande,
+                    nom_client,
+                    prenom_client,
+                    email_client,
+                    telephone_client,
+                    adresse_ligne_1,
+                    adresse_ligne_2,
+                    code_postal,
+                    ville,
+                    date_prestation,
+                    heure_livraison_souhaitee,
+                    nombre_personnes,
+                    titre_menu_applique,
+                    conditions_menu_appliquees,
+                    prix_menu_avant_remise,
+                    taux_remise_applique,
+                    montant_remise,
+                    distance_livraison_km,
+                    frais_livraison,
+                    prix_total,
+                    id_utilisateur,
+                    id_menu,
+                    id_statut_courant
+                FROM commande
+                WHERE numero_commande = :numero_commande
+                AND id_utilisateur = :id_utilisateur
+                LIMIT 1
+            SQL
+        );
+
+        $statement->execute([
+            'numero_commande' => trim($number),
+            'id_utilisateur' => $userId,
+        ]);
+
+        $order = $statement->fetch();
+
+        return is_array($order) ? $order : null;
     }
 }
