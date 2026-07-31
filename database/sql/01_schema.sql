@@ -3,7 +3,7 @@
 
 CREATE DATABASE IF NOT EXISTS `vite_et_gourmand`
     CHARACTER SET `utf8mb4`
-    COLLATE `utf8mb4_0900_ai_ci`;
+    COLLATE `utf8mb4_unicode_ci`;
 
 USE `vite_et_gourmand`;
 
@@ -20,7 +20,7 @@ CREATE TABLE `role` (
         UNIQUE (`libelle`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `utilisateur` (
     `id_utilisateur` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -47,7 +47,7 @@ CREATE TABLE `utilisateur` (
         CHECK (`actif` IN (0, 1))
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `jeton_reinitialisation` (
     `id_jeton` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -67,7 +67,7 @@ CREATE TABLE `jeton_reinitialisation` (
         CHECK (`date_expiration` > `date_creation`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `theme` (
     `id_theme` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -79,7 +79,7 @@ CREATE TABLE `theme` (
         UNIQUE (`libelle`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `regime` (
     `id_regime` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -91,7 +91,7 @@ CREATE TABLE `regime` (
         UNIQUE (`libelle`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `menu` (
     `id_menu` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -129,7 +129,7 @@ CREATE TABLE `menu` (
     INDEX `idx_menu_nb_personnes` (`nombre_personnes_minimum`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `image_menu` (
     `id_image_menu` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -146,7 +146,7 @@ CREATE TABLE `image_menu` (
     INDEX `idx_image_menu_ordre` (`id_menu`, `ordre_affichage`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `plat` (
     `id_plat` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -162,7 +162,7 @@ CREATE TABLE `plat` (
         CHECK (`actif` IN (0, 1))
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `allergene` (
     `id_allergene` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -174,7 +174,7 @@ CREATE TABLE `allergene` (
         UNIQUE (`libelle`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `menu_plat` (
     `id_menu` BIGINT UNSIGNED NOT NULL,
@@ -184,7 +184,7 @@ CREATE TABLE `menu_plat` (
         PRIMARY KEY (`id_menu`, `id_plat`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `plat_allergene` (
     `id_plat` BIGINT UNSIGNED NOT NULL,
@@ -194,7 +194,7 @@ CREATE TABLE `plat_allergene` (
         PRIMARY KEY (`id_plat`, `id_allergene`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `statut_commande` (
     `id_statut_commande` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -215,7 +215,7 @@ CREATE TABLE `statut_commande` (
         CHECK (`est_terminal` IN (0, 1))
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `commande` (
     `id_commande` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -271,7 +271,7 @@ CREATE TABLE `commande` (
     INDEX `idx_commande_statut_date` (`id_statut_courant`, `date_commande`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `historique_statut_commande` (
     `id_historique_statut` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -288,7 +288,7 @@ CREATE TABLE `historique_statut_commande` (
         (`id_commande`, `date_heure_changement`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `intervention_commande` (
     `id_intervention` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -310,7 +310,7 @@ CREATE TABLE `intervention_commande` (
         CHECK (`date_heure_contact` <= `date_heure_action`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `pret_materiel` (
     `id_pret_materiel` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -329,7 +329,7 @@ CREATE TABLE `pret_materiel` (
         CHECK (`montant_frais_du` IN (0, 600))
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `avis` (
     `id_avis` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -353,7 +353,7 @@ CREATE TABLE `avis` (
     INDEX `idx_avis_moderation_date` (`statut_moderation`, `date_creation`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 CREATE TABLE `horaire` (
     `id_horaire` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -394,7 +394,7 @@ CREATE TABLE `horaire` (
     INDEX `idx_horaire_ordre` (`ordre_jour`)
 ) ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci;
+  COLLATE = utf8mb4_unicode_ci;
 
 ALTER TABLE `utilisateur`
     ADD CONSTRAINT `fk_utilisateur_role`
