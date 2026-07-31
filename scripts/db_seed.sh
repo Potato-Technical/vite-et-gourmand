@@ -39,6 +39,7 @@ docker compose \
     --project-directory "${PROJECT_ROOT}" \
     exec -T db \
     mysql \
+    --default-character-set=utf8mb4 \
     -u"${DB_USER}" \
     -p"${DB_PASS}" \
     "${DB_NAME}" \
