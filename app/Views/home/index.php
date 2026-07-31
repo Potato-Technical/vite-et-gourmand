@@ -18,5 +18,33 @@ declare(strict_types=1);
 
         <p>Bienvenue sur le site Vite & Gourmand.</p>
     </main>
+
+    <?php
+
+    use App\Core\Auth;
+    use App\Core\Csrf;
+    ?>
+
+    <?php if (Auth::check()): ?>
+        <?php $user = Auth::user(); ?>
+
+        <p>
+            Connecté en tant que
+            <?= e($user['prenom'] ?? '') ?>
+            <?= e($user['nom'] ?? '') ?>
+        </p>
+
+        <form method="post" action="/deconnexion">
+            <?= Csrf::field() ?>
+
+            <button type="submit">
+                Se déconnecter
+            </button>
+        </form>
+    <?php else: ?>
+        <a href="/connexion">
+            Se connecter
+        </a>
+    <?php endif; ?>
 </body>
 </html>

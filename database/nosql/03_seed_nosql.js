@@ -6,7 +6,7 @@
 // Ce fichier ne contient aucune donnee personnelle.
 //
 // Execution :
-//   mongosh "mongodb://localhost:27017" 03_seed_nosql.mongodb.js
+//   mongosh "mongodb://localhost:27017" 03_seed_nosql.js
 //
 // ATTENTION : seed de developpement uniquement.
 // Le script est reexecutable et deterministe : il recree entierement la
