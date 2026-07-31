@@ -1,8 +1,19 @@
+# Variables d'environnement
 .env
+
+# Dépendances Composer
 /vendor/
+
+# Logs
 /storage/logs/*
+*.log
+
+# Conserver le dossier vide
 !.gitkeep
+
+# Éditeurs
 .idea/
 .vscode/
-*.log
+
+# Fichiers divers
 tree.txt
